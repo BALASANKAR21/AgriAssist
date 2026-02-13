@@ -25,6 +25,7 @@ const navLinks = [
   { href: "/market-analysis", labelKey: "marketAnalysis" },
   { href: "/schemes", labelKey: "govSchemes" },
   { href: "/fertilizer-calculator", labelKey: "fertilizerCalculator" },
+  { href: "/profit-prediction", labelKey: "profitPrediction" },
 ];
 
 export default function Header() {

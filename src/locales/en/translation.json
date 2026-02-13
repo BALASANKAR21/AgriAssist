@@ -30,6 +30,7 @@
   "marketAnalysis": "Market Analysis",
   "govSchemes": "Govt. Schemes",
   "fertilizerCalculator": "Fertilizer Calculator",
+  "profitPrediction": "Profit Prediction",
 
   "changeLanguage": "Change Language",
   "openMenu": "Open menu",
@@ -148,5 +149,14 @@
   "expense_logged_desc": "{{item}} for {{amount}} {{currency}}",
   "expense_logged_speak": "Expense logged: {{item}} for {{amount}} dollars.",
   "logging_failed": "Logging Failed",
-  "logging_failed_speak": "Sorry, I couldn't log that. Please try again."
+  "logging_failed_speak": "Sorry, I couldn't log that. Please try again.",
+
+  "profit_prediction_title": "Profit Prediction",
+  "profit_prediction_desc": "Estimate your potential profit for the season.",
+  "expected_yield": "Expected Yield (in Quintals)",
+  "expected_market_price": "Expected Market Price (per Quintal)",
+  "calculate_profit": "Calculate Profit",
+  "estimated_profit": "Estimated Profit",
+  "based_on_inputs": "Based on your inputs and logged expenses.",
+  "your_expenses": "Your Total Expenses"
 }

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Thermometer, Wheat, ScanLine, Bot, Wallet, Mic, MapPin, LandPlot, BaggageClaim, BookCopy, TrendingUp } from 'lucide-react';
+import { Thermometer, Wheat, ScanLine, Bot, Wallet, Mic, MapPin, LandPlot, BaggageClaim, BookCopy, TrendingUp, CircleDollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const quickActions = [
@@ -32,6 +32,7 @@ const tools = [
   { href: "/fertilizer-calculator", icon: BaggageClaim, title: "fertilizerCalculator" },
   { href: "/market-analysis", icon: TrendingUp, title: "marketAnalysis" },
   { href: "/schemes", icon: BookCopy, title: "govSchemes" },
+  { href: "/profit-prediction", icon: CircleDollarSign, title: "profitPrediction" },
 ];
 
 import { useTranslation } from "react-i18next";

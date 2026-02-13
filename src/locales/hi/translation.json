@@ -30,6 +30,7 @@
   "marketAnalysis": "बाजार विश्लेषण",
   "govSchemes": "सरकारी योजनाएं",
   "fertilizerCalculator": "उर्वरक कैलकुलेटर",
+  "profitPrediction": "लाभ की भविष्यवाणी",
 
   "changeLanguage": "भाषा बदलें",
   "openMenu": "मेन्यू खोलें",
@@ -117,8 +118,8 @@
   "recommendation_hold": "सिफारिश: रोकें",
   "sell_reason": "कीमतें वर्तमान में ऊंची हैं और पिछले सप्ताह में मजबूत तेजी दिखाई है। मुनाफा लॉक करने का यह अच्छा समय है।",
   "hold_reason": "कीमतें स्थिर या घट रही हैं। बेचने से पहले संभावित बाजार सुधार की प्रतीक्षा करना बेहतर हो सकता है।",
-  "sell_now": "अभी बेचें",
   "set_price_alert": "मूल्य चेतावनी सेट करें",
+  "sell_now": "अभी बेचें",
   
   "schemes_title": "सरकारी योजनाएं",
   "schemes_desc": "किसानों के लिए लाभकारी सरकारी योजनाओं को खोजें और जानें।",
@@ -148,5 +149,14 @@
   "expense_logged_desc": "{{amount}} {{currency}} के लिए {{item}}",
   "expense_logged_speak": "खर्च लॉग किया गया: {{amount}} डॉलर के लिए {{item}}।",
   "logging_failed": "लॉगिंग विफल",
-  "logging_failed_speak": "माफ़ करना, मैं उसे लॉग नहीं कर सका। कृपया फिर से प्रयास करें।"
+  "logging_failed_speak": "माफ़ करना, मैं उसे लॉग नहीं कर सका। कृपया फिर से प्रयास करें।",
+
+  "profit_prediction_title": "लाभ की भविष्यवाणी",
+  "profit_prediction_desc": "मौसम के लिए अपने संभावित लाभ का अनुमान लगाएं।",
+  "expected_yield": "अपेक्षित उपज (क्विंटल में)",
+  "expected_market_price": "अपेक्षित बाजार मूल्य (प्रति क्विंटल)",
+  "calculate_profit": "लाभ की गणना करें",
+  "estimated_profit": "अनुमानित लाभ",
+  "based_on_inputs": "आपके इनपुट और लॉग किए गए खर्चों के आधार पर।",
+  "your_expenses": "आपके कुल खर्चे"
 }
