@@ -11,21 +11,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
 import { Sprout } from "lucide-react";
+import i18n from "@/lib/i18n";
 
 const loginSchema = z.object({
   phoneNumber: z.string().min(10, "Please enter a valid 10-digit phone number."),
-  language: z.enum(["en", "hi"]),
+  language: z.enum(["en", "hi", "ta", "te", "kn", "ml", "bn", "mr"]),
 });
 
 export default function LoginPage() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const router = useRouter();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       phoneNumber: "",
-      language: (i18n.language as "en" | "hi") || "en",
+      language: (i18n.language as "en" | "hi" | "ta" | "te" | "kn" | "ml" | "bn" | "mr") || "en",
     },
   });
 
@@ -78,6 +79,12 @@ export default function LoginPage() {
                       <SelectContent>
                         <SelectItem value="en">English</SelectItem>
                         <SelectItem value="hi">हिंदी (Hindi)</SelectItem>
+                        <SelectItem value="ta">தமிழ் (Tamil)</SelectItem>
+                        <SelectItem value="te">తెలుగు (Telugu)</SelectItem>
+                        <SelectItem value="kn">ಕನ್ನಡ (Kannada)</SelectItem>
+                        <SelectItem value="ml">മലയാളം (Malayalam)</SelectItem>
+                        <SelectItem value="bn">বাংলা (Bengali)</SelectItem>
+                        <SelectItem value="mr">मराठी (Marathi)</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />

@@ -83,12 +83,14 @@ export default function Header() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => changeLanguage('en')}>
-                English
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => changeLanguage('hi')}>
-                हिंदी (Hindi)
-              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => changeLanguage('en')}>English</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => changeLanguage('hi')}>हिंदी (Hindi)</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => changeLanguage('ta')}>தமிழ் (Tamil)</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => changeLanguage('te')}>తెలుగు (Telugu)</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => changeLanguage('kn')}>ಕನ್ನಡ (Kannada)</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => changeLanguage('ml')}>മലയാളം (Malayalam)</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => changeLanguage('bn')}>বাংলা (Bengali)</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => changeLanguage('mr')}>मराठी (Marathi)</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
