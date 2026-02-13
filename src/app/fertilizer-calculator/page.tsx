@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { mockCropData } from "@/lib/data";
 import { Leaf, BaggageClaim } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const calculatorSchema = z.object({
   cropId: z.string().min(1, "Please select a crop."),
@@ -26,6 +27,7 @@ const getFertilizerRecommendation = (cropId: string, acreage: number) => {
 
 export default function FertilizerCalculatorPage() {
   const [recommendation, setRecommendation] = useState<{ urea: string; dap: string } | null>(null);
+  const { t } = useTranslation();
 
   const form = useForm<z.infer<typeof calculatorSchema>>({
     resolver: zodResolver(calculatorSchema),
@@ -43,8 +45,8 @@ export default function FertilizerCalculatorPage() {
     <div className="container mx-auto p-4 md:p-8">
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
-          <CardTitle className="text-3xl font-bold flex items-center gap-3"><BaggageClaim /> Fertilizer Calculator</CardTitle>
-          <CardDescription>Calculate the required fertilizer for your crops.</CardDescription>
+          <CardTitle className="text-3xl font-bold flex items-center gap-3"><BaggageClaim /> {t('fertilizer_calculator_title')}</CardTitle>
+          <CardDescription>{t('fertilizer_calculator_desc')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -54,11 +56,11 @@ export default function FertilizerCalculatorPage() {
                 name="cropId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Select Crop</FormLabel>
+                    <FormLabel>{t('select_crop')}</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger className="h-12 text-lg">
-                          <SelectValue placeholder="Choose a crop..." />
+                          <SelectValue placeholder={t('choose_a_crop')} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -76,7 +78,7 @@ export default function FertilizerCalculatorPage() {
                 name="acreage"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Enter Land Size (in acres)</FormLabel>
+                    <FormLabel>{t('land_size_acres')}</FormLabel>
                     <FormControl>
                       <Input type="number" placeholder="e.g., 5.5" {...field} className="h-12 text-lg"/>
                     </FormControl>
@@ -84,28 +86,28 @@ export default function FertilizerCalculatorPage() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full h-14 text-xl btn-48">Calculate</Button>
+              <Button type="submit" className="w-full h-14 text-xl btn-48">{t('calculate')}</Button>
             </form>
           </Form>
 
           {recommendation && (
-            <Card className="mt-8 bg-green-50 border-green-200">
+            <Card className="mt-8 bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-700">
                 <CardHeader>
-                    <CardTitle className="text-2xl flex items-center gap-3"><Leaf className="text-primary"/> Recommendation</CardTitle>
+                    <CardTitle className="text-2xl flex items-center gap-3"><Leaf className="text-primary"/> {t('recommendation')}</CardTitle>
                 </CardHeader>
                 <CardContent className="text-center space-y-4">
                     <div className="flex justify-around">
                         <div>
                             <p className="text-4xl font-bold text-primary">{recommendation.urea}</p>
-                            <p className="text-muted-foreground">Bags of Urea</p>
+                            <p className="text-muted-foreground">{t('bags_of_urea')}</p>
                         </div>
                         <div>
                             <p className="text-4xl font-bold text-primary">{recommendation.dap}</p>
-                            <p className="text-muted-foreground">Bags of DAP</p>
+                            <p className="text-muted-foreground">{t('bags_of_dap')}</p>
                         </div>
                     </div>
                      <Button variant="secondary" onClick={() => { setRecommendation(null); form.reset(); }} className="mt-4">
-                        Calculate Again
+                        {t('calculate_again')}
                     </Button>
                 </CardContent>
             </Card>

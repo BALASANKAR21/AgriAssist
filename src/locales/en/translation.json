@@ -1,3 +1,4 @@
+
 {
   "welcome_to_agri": "Welcome to AgriAssist",
   "tagline": "Your AI-powered assistant for smarter, more efficient farming.",
@@ -160,5 +161,15 @@
   "calculate_profit": "Calculate Profit",
   "estimated_profit": "Estimated Profit",
   "based_on_inputs": "Based on your inputs and logged expenses.",
-  "your_expenses": "Your Total Expenses"
+  "your_expenses": "Your Total Expenses",
+  "price_per_qtl": "Price per Qtl",
+  "scheme1_title": "PM-KISAN Scheme",
+  "scheme1_desc": "Income support to all landholding farmer families.",
+  "scheme1_apply": "Register on the PM-KISAN portal with your Aadhaar and land details.",
+  "scheme2_title": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+  "scheme2_desc": "Crop insurance against yield losses.",
+  "scheme2_apply": "Contact your nearest bank or insurance company during the enrollment period.",
+  "scheme3_title": "Soil Health Card Scheme",
+  "scheme3_desc": "Provides farmers with information on the nutrient status of their soil.",
+  "scheme3_apply": "Contact the local agricultural department to get your soil tested."
 }

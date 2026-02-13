@@ -16,6 +16,7 @@ import { PestMap } from "./map-component";
 import { mockPestAlerts } from "@/lib/data";
 import type { PestAlert } from "@/lib/types";
 import { PlusCircle, Loader2, MapPin } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const reportSchema = z.object({
   pestName: z.string().min(3, "Pest name is required."),
@@ -31,6 +32,7 @@ export default function CommunityPestAlertPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const form = useForm<z.infer<typeof reportSchema>>({
     resolver: zodResolver(reportSchema),
@@ -45,7 +47,7 @@ export default function CommunityPestAlertPage() {
   
   // A real app would get this from navigator.geolocation
   const getCurrentLocation = () => {
-    toast({ title: "Fetching Location...", description: "This is a mock-up." });
+    toast({ title: t("fetching_location"), description: "This is a mock-up." });
     form.setValue('lat', 28.6139 + (Math.random() - 0.5) * 0.1);
     form.setValue('lng', 77.2090 + (Math.random() - 0.5) * 0.1);
   }
@@ -63,7 +65,7 @@ export default function CommunityPestAlertPage() {
           reportedAt: new Date(),
         };
         setAlerts(prev => [newAlert, ...prev]);
-        toast({ title: "Pest Alert Reported!", description: `Thank you for reporting ${values.pestName}.` });
+        toast({ title: t("pest_report_success"), description: t("pest_report_success_desc", { pestName: values.pestName }) });
         setIsDialogOpen(false);
         form.reset();
       }, 1000);
@@ -75,35 +77,35 @@ export default function CommunityPestAlertPage() {
       <Card>
         <CardHeader className="flex-row items-center justify-between">
           <div>
-            <CardTitle className="text-3xl font-bold flex items-center gap-3"><MapPin /> Community Pest Alerts</CardTitle>
-            <CardDescription>See and report pest sightings in your community.</CardDescription>
+            <CardTitle className="text-3xl font-bold flex items-center gap-3"><MapPin /> {t('pest_alert_title')}</CardTitle>
+            <CardDescription>{t('pest_alert_description')}</CardDescription>
           </div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button className="h-12 text-lg btn-48">
-                <PlusCircle className="mr-2 h-5 w-5" /> Report a Pest
+                <PlusCircle className="mr-2 h-5 w-5" /> {t('report_pest')}
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-lg">
               <DialogHeader>
-                <DialogTitle className="text-2xl">Report a Pest Sighting</DialogTitle>
+                <DialogTitle className="text-2xl">{t('report_pest_sighting')}</DialogTitle>
                 <DialogDescription>
-                  Help your neighbors by reporting pest activity. Fill out the details below.
+                  {t('report_pest_help')}
                 </DialogDescription>
               </DialogHeader>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
                     <Button type="button" variant="outline" onClick={getCurrentLocation} className="w-full">
-                        <MapPin className="mr-2 h-4 w-4" /> Use My Current Location
+                        <MapPin className="mr-2 h-4 w-4" /> {t('use_my_location')}
                     </Button>
                   <FormField
                     control={form.control}
                     name="pestName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Pest Name</FormLabel>
+                        <FormLabel>{t('pest_name')}</FormLabel>
                         <FormControl>
-                          <Input placeholder="e.g., Corn Earworm" {...field} className="h-12"/>
+                          <Input placeholder={t('pest_name_placeholder')} {...field} className="h-12"/>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -114,17 +116,17 @@ export default function CommunityPestAlertPage() {
                     name="severity"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Severity</FormLabel>
+                        <FormLabel>{t('severity')}</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger className="h-12">
-                              <SelectValue placeholder="Select severity" />
+                              <SelectValue placeholder={t('select_severity')} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="Low">Low</SelectItem>
-                            <SelectItem value="Medium">Medium</SelectItem>
-                            <SelectItem value="High">High</SelectItem>
+                            <SelectItem value="Low">{t('low')}</SelectItem>
+                            <SelectItem value="Medium">{t('medium')}</SelectItem>
+                            <SelectItem value="High">{t('high')}</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -136,9 +138,9 @@ export default function CommunityPestAlertPage() {
                     name="description"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description</FormLabel>
+                        <FormLabel>{t('description')}</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Describe what you saw, location, etc." {...field} />
+                          <Textarea placeholder={t('description_placeholder_pest')} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -147,7 +149,7 @@ export default function CommunityPestAlertPage() {
                   <DialogFooter>
                     <Button type="submit" disabled={isPending} className="h-12 text-lg btn-48">
                       {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      Submit Report
+                      {t('submit_report')}
                     </Button>
                   </DialogFooter>
                 </form>

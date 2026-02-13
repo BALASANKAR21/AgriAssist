@@ -1,37 +1,40 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { BarChart, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Bar } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { mockMarketPrices } from "@/lib/data";
 import { TrendingUp, Scale } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-const sellHoldAdvice = {
-    "sell": {
-        title: "Recommendation: Sell",
-        reason: "Prices are currently high and have shown strong upward momentum over the past week. It's a good time to lock in profits.",
-        className: "bg-green-50 border-green-200 text-green-900",
-    },
-    "hold": {
-        title: "Recommendation: Hold",
-        reason: "Prices have been stagnant or declining. It might be better to wait for a potential market recovery before selling.",
-        className: "bg-orange-50 border-orange-200 text-orange-900",
-    }
-}
-
-// Simple logic to decide whether to sell or hold
-const currentAdvice = mockMarketPrices[mockMarketPrices.length - 1].price > mockMarketPrices[0].price ? sellHoldAdvice.sell : sellHoldAdvice.hold;
+import { useTranslation } from "react-i18next";
 
 export default function MarketAnalysisPage() {
+    const { t } = useTranslation();
+
+    const sellHoldAdvice = {
+        "sell": {
+            title: t("recommendation_sell"),
+            reason: t("sell_reason"),
+            className: "bg-green-50 border-green-200 text-green-900 dark:bg-green-900/20 dark:border-green-700 dark:text-green-200",
+        },
+        "hold": {
+            title: t("recommendation_hold"),
+            reason: t("hold_reason"),
+            className: "bg-orange-50 border-orange-200 text-orange-900 dark:bg-orange-900/20 dark:border-orange-700 dark:text-orange-200",
+        }
+    }
+
+    // Simple logic to decide whether to sell or hold
+    const currentAdvice = mockMarketPrices[mockMarketPrices.length - 1].price > mockMarketPrices[0].price ? sellHoldAdvice.sell : sellHoldAdvice.hold;
+
   return (
     <div className="container mx-auto p-4 md:p-8">
       <div className="space-y-8">
         <Card>
           <CardHeader>
             <CardTitle className="text-3xl font-bold flex items-center gap-3">
-              <TrendingUp /> Market Price Trends (Tomato)
+              <TrendingUp /> {t('market_analysis_title')}
             </CardTitle>
-            <CardDescription>Price per Quintal over the last 10 days.</CardDescription>
+            <CardDescription>{t('market_analysis_desc')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[400px]">
@@ -48,9 +51,14 @@ export default function MarketAnalysisPage() {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
                   <YAxis />
-                  <Tooltip />
+                  <Tooltip 
+                    contentStyle={{
+                        backgroundColor: 'hsl(var(--background))',
+                        border: '1px solid hsl(var(--border))'
+                    }}
+                  />
                   <Legend />
-                  <Line type="monotone" dataKey="price" stroke="#388E3C" strokeWidth={3} activeDot={{ r: 8 }} />
+                  <Line type="monotone" dataKey="price" name={t('price_per_qtl')} stroke="hsl(var(--primary))" strokeWidth={3} activeDot={{ r: 8 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -66,8 +74,8 @@ export default function MarketAnalysisPage() {
           <CardContent>
             <p className="text-lg">{currentAdvice.reason}</p>
             <div className="mt-4 flex gap-4">
-                <Button className="h-12 text-lg bg-primary">Sell Now</Button>
-                <Button variant="secondary" className="h-12 text-lg">Set Price Alert</Button>
+                <Button className="h-12 text-lg btn-48">{t('sell_now')}</Button>
+                <Button variant="secondary" className="h-12 text-lg btn-48">{t('set_price_alert')}</Button>
             </div>
           </CardContent>
         </Card>

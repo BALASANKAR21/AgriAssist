@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { Leaf, LandPlot, MapPin, CheckCircle2, Sprout } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const recommenderSchema = z.object({
   soilType: z.enum(["Loam", "Clay", "Sandy", "Silt"]),
@@ -19,9 +20,9 @@ const recommenderSchema = z.object({
 });
 
 const steps = [
-  { id: 1, title: "Soil Type", icon: Sprout, field: "soilType" },
-  { id: 2, title: "Land Size", icon: LandPlot, field: "landSize" },
-  { id: 3, title: "Region", icon: MapPin, field: "region" },
+  { id: 1, title: "soil_type", icon: Sprout, field: "soilType" },
+  { id: 2, title: "land_size", icon: LandPlot, field: "landSize" },
+  { id: 3, title: "region", icon: MapPin, field: "region" },
 ] as const;
 
 const mockRecommendations = {
@@ -35,6 +36,7 @@ const mockRecommendations = {
 export default function CropRecommenderPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [recommendations, setRecommendations] = useState<string[] | null>(null);
+  const { t } = useTranslation();
 
   const form = useForm<z.infer<typeof recommenderSchema>>({
     resolver: zodResolver(recommenderSchema),
@@ -78,8 +80,8 @@ export default function CropRecommenderPage() {
     <div className="container mx-auto p-4 md:p-8">
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
-          <CardTitle className="text-3xl font-bold flex items-center gap-3"><Leaf/> Crop Recommender</CardTitle>
-          <CardDescription>Get suggestions for the best crops to plant.</CardDescription>
+          <CardTitle className="text-3xl font-bold flex items-center gap-3"><Leaf/> {t('crop_recommender_title')}</CardTitle>
+          <CardDescription>{t('crop_recommender_desc')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Progress value={progress} className="mb-8 h-3" />
@@ -90,7 +92,7 @@ export default function CropRecommenderPage() {
                 <div key={step.id} className={currentStep === index ? "block" : "hidden"}>
                   <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
                     <step.icon className="w-6 h-6 text-primary" />
-                    {step.title}
+                    {t(step.title)}
                   </h3>
                   {step.id === 1 && (
                      <FormField
@@ -98,16 +100,16 @@ export default function CropRecommenderPage() {
                       name="soilType"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>What is the primary soil type of your farm?</FormLabel>
+                          <FormLabel>{t('soil_type_question')}</FormLabel>
                            <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
-                              <SelectTrigger className="h-12 text-lg"><SelectValue placeholder="Select soil type" /></SelectTrigger>
+                              <SelectTrigger className="h-12 text-lg"><SelectValue placeholder={t('select_soil_type')} /></SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="Loam">Loam</SelectItem>
-                              <SelectItem value="Clay">Clay</SelectItem>
-                              <SelectItem value="Sandy">Sandy</SelectItem>
-                              <SelectItem value="Silt">Silt</SelectItem>
+                              <SelectItem value="Loam">{t('loam')}</SelectItem>
+                              <SelectItem value="Clay">{t('clay')}</SelectItem>
+                              <SelectItem value="Sandy">{t('sandy')}</SelectItem>
+                              <SelectItem value="Silt">{t('silt')}</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -121,9 +123,9 @@ export default function CropRecommenderPage() {
                       name="landSize"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>What is the size of your land in acres?</FormLabel>
+                          <FormLabel>{t('land_size_question')}</FormLabel>
                           <FormControl>
-                            <Input type="number" placeholder="e.g., 5.5" {...field} className="h-12 text-lg"/>
+                            <Input type="number" placeholder={t('land_size_placeholder')} {...field} className="h-12 text-lg"/>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -136,17 +138,17 @@ export default function CropRecommenderPage() {
                       name="region"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Which region is your farm located in?</FormLabel>
+                          <FormLabel>{t('region_question')}</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
-                              <SelectTrigger className="h-12 text-lg"><SelectValue placeholder="Select region" /></SelectTrigger>
+                              <SelectTrigger className="h-12 text-lg"><SelectValue placeholder={t('select_region')} /></SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="North">North</SelectItem>
-                              <SelectItem value="South">South</SelectItem>
-                              <SelectItem value="East">East</SelectItem>
-                              <SelectItem value="West">West</SelectItem>
-                              <SelectItem value="Central">Central</SelectItem>
+                              <SelectItem value="North">{t('north')}</SelectItem>
+                              <SelectItem value="South">{t('south')}</SelectItem>
+                              <SelectItem value="East">{t('east')}</SelectItem>
+                              <SelectItem value="West">{t('west')}</SelectItem>
+                              <SelectItem value="Central">{t('central')}</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -161,7 +163,7 @@ export default function CropRecommenderPage() {
                 <div>
                    <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
                     <CheckCircle2 className="w-6 h-6 text-green-500" />
-                    Recommended Crops
+                    {t('recommended_crops')}
                   </h3>
                   <Card className="bg-primary/5">
                     <CardContent className="p-6">
@@ -175,14 +177,14 @@ export default function CropRecommenderPage() {
 
               <div className="flex justify-between pt-4">
                 <Button type="button" variant="outline" onClick={handleBack} disabled={currentStep === 0 && !recommendations} className="h-12 text-lg btn-48">
-                  Back
+                  {t('back')}
                 </Button>
                 {currentStep < steps.length - 1 && !recommendations ? (
-                  <Button type="button" onClick={handleNext} className="h-12 text-lg btn-48">Next</Button>
+                  <Button type="button" onClick={handleNext} className="h-12 text-lg btn-48">{t('next')}</Button>
                 ) : !recommendations ? (
-                  <Button type="submit" className="h-12 text-lg btn-48">Get Recommendations</Button>
+                  <Button type="submit" className="h-12 text-lg btn-48">{t('get_recommendations')}</Button>
                 ) : (
-                  <Button type="button" onClick={resetForm} className="h-12 text-lg btn-48">Start Over</Button>
+                  <Button type="button" onClick={resetForm} className="h-12 text-lg btn-48">{t('start_over')}</Button>
                 )}
               </div>
             </form>

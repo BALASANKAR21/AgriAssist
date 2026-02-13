@@ -129,7 +129,7 @@ export default function VoiceLedgerPage() {
             </p>
           </div>
           
-           <Card className="bg-green-500/10 border-green-200 dark:bg-green-500/10 w-full">
+           <Card className="bg-green-500/10 border-green-200 dark:bg-green-900/20 dark:border-green-700 w-full">
                 <CardHeader>
                     <CardTitle className="text-2xl flex items-center gap-3"><TrendingUp className="text-primary"/> {t('financial_summary')}</CardTitle>
                 </CardHeader>

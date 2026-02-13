@@ -82,7 +82,7 @@ export default function ProfitPredictionPage() {
           </Form>
 
           {profit !== null && (
-            <Card className="mt-8 bg-green-500/10 border-green-200 dark:bg-green-500/10">
+            <Card className="mt-8 bg-green-500/10 border-green-200 dark:bg-green-900/20 dark:border-green-700">
                 <CardHeader>
                     <CardTitle className="text-2xl flex items-center gap-3"><TrendingUp className="text-primary"/> {t('estimated_profit')}</CardTitle>
                 </CardHeader>

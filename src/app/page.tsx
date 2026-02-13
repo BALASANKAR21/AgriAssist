@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Thermometer, Wheat, ScanLine, Bot, Wallet, Mic, MapPin, LandPlot, BaggageClaim, BookCopy, TrendingUp, CircleDollarSign, CloudSun } from 'lucide-react';
+import { Bot, ScanLine, Wallet, LandPlot, MapPin, BaggageClaim, BookCopy, TrendingUp, CircleDollarSign, CloudSun, Mic, Thermometer, Wheat } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from "react-i18next";
 

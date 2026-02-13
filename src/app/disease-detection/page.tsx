@@ -4,10 +4,11 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Camera, Upload, Loader2, AlertTriangle, Wind, Siren, ScanLine, Volume2 } from "lucide-react";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Camera, Upload, Loader2, ScanLine, Volume2 } from "lucide-react";
 import Image from "next/image";
 import { useTextToSpeech } from "@/hooks/use-speech";
+import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 export default function DiseaseDetectionPage() {
   const [image, setImage] = useState<string | null>(null);
@@ -19,6 +20,7 @@ export default function DiseaseDetectionPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const { speak, isSupported, isSpeaking } = useTextToSpeech();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const getCameraPermission = async () => {
@@ -90,7 +92,7 @@ export default function DiseaseDetectionPage() {
       };
       setDiagnosis(newDiagnosis);
       setIsDiagnosing(false);
-      speak(`Diagnosis: ${newDiagnosis.name}. Treatment: ${newDiagnosis.treatment}`);
+      speak(`${t('diagnosis_result', { diagnosisName: newDiagnosis.name })}. ${t('recommended_treatment')} ${newDiagnosis.treatment}`);
     }, 1500);
   };
   
@@ -111,8 +113,8 @@ export default function DiseaseDetectionPage() {
     <div className="container mx-auto p-4 md:p-8">
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
-          <CardTitle className="text-3xl font-bold flex items-center gap-3"><ScanLine/> Crop Disease Detection</CardTitle>
-          <CardDescription>Capture or upload a photo of a plant leaf to diagnose diseases.</CardDescription>
+          <CardTitle className="text-3xl font-bold flex items-center gap-3"><ScanLine/> {t('disease_detection_title')}</CardTitle>
+          <CardDescription>{t('disease_detection_desc')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {!image ? (
@@ -122,7 +124,7 @@ export default function DiseaseDetectionPage() {
                 {!hasCameraPermission && (
                   <div className="text-center text-muted-foreground p-4">
                     <Camera size={48} className="mx-auto mb-2"/>
-                    <p>Camera not available or permission denied.</p>
+                    <p>{t('camera_denied')}</p>
                   </div>
                 )}
                 <canvas ref={canvasRef} className="hidden" />
@@ -130,10 +132,10 @@ export default function DiseaseDetectionPage() {
 
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button onClick={handleCapture} disabled={!hasCameraPermission} className="w-full h-14 text-xl btn-48">
-                  <Camera className="mr-2 h-6 w-6" /> Capture
+                  <Camera className="mr-2 h-6 w-6" /> {t('capture')}
                 </Button>
                 <Button onClick={() => fileInputRef.current?.click()} className="w-full h-14 text-xl btn-48" variant="secondary">
-                   <Upload className="mr-2 h-6 w-6" /> Upload Photo
+                   <Upload className="mr-2 h-6 w-6" /> {t('upload_photo')}
                 </Button>
                 <input type="file" accept="image/*" ref={fileInputRef} onChange={handleFileUpload} className="hidden" />
               </div>
@@ -147,25 +149,25 @@ export default function DiseaseDetectionPage() {
               {!diagnosis && (
                 <Button onClick={handleDiagnose} disabled={isDiagnosing} className="w-full h-14 text-xl btn-48">
                   {isDiagnosing ? <Loader2 className="mr-2 h-6 w-6 animate-spin" /> : <ScanLine className="mr-2 h-6 w-6" />}
-                  {isDiagnosing ? "Diagnosing..." : "Diagnose Plant"}
+                  {isDiagnosing ? t('diagnosing') : t('diagnose_plant')}
                 </Button>
               )}
 
               {diagnosis && (
-                <Card className="bg-green-50 border-green-200">
+                <Card className="bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-700">
                     <CardHeader>
-                        <CardTitle className="text-2xl">Diagnosis: {diagnosis.name}</CardTitle>
+                        <CardTitle className="text-2xl">{t('diagnosis_result', { diagnosisName: diagnosis.name })}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <h3 className="font-bold text-lg">Recommended Treatment:</h3>
+                        <h3 className="font-bold text-lg">{t('recommended_treatment')}</h3>
                         <p className="text-lg">{diagnosis.treatment}</p>
-                        {isSupported && <Button variant="ghost" size="icon" onClick={() => speak(diagnosis.treatment)} aria-label="Read treatment aloud"><Volume2 className={isSpeaking ? "text-accent" : ""}/></Button>}
+                        {isSupported && <Button variant="ghost" size="icon" onClick={() => speak(diagnosis.treatment)} aria-label={t('read_treatment_aloud')}><Volume2 className={isSpeaking ? "text-accent" : ""}/></Button>}
                     </CardContent>
                 </Card>
               )}
 
               <Button onClick={reset} variant="outline" className="w-full h-14 text-xl btn-48">
-                Take Another Photo
+                {t('take_another_photo')}
               </Button>
             </div>
           )}

@@ -1,5 +1,6 @@
-import type { Expense, PestAlert, ImagePlaceholder, MarketPrice, GovernmentScheme, CropInfo } from './types';
+import type { Expense, PestAlert, MarketPrice, GovernmentScheme, CropInfo } from './types';
 
+// All amounts are in INR
 export const mockExpenses: Expense[] = [
   { id: '1', item: 'Corn Seeds', category: 'Seeds', amount: 3500, currency: 'INR', date: new Date('2024-05-01') },
   { id: '2', item: 'Tractor Fuel', category: 'Fuel', amount: 2500, currency: 'INR', date: new Date('2024-05-03') },
@@ -26,6 +27,7 @@ export const mockPestAlerts: PestAlert[] = [
     },
 ];
 
+// Price per Quintal (100 kg) in INR
 export const mockMarketPrices: MarketPrice[] = [
   { date: '2024-05-01', price: 2200 },
   { date: '2024-05-02', price: 2250 },
@@ -39,10 +41,11 @@ export const mockMarketPrices: MarketPrice[] = [
   { date: '2024-05-10', price: 2470 },
 ];
 
+// These use translation keys, the actual text is in the locale files.
 export const mockGovSchemes: GovernmentScheme[] = [
-    { id: 'gs1', title: 'PM-KISAN Scheme', description: 'Income support to all landholding farmer families.', howToApply: 'Register on the PM-KISAN portal with your Aadhaar and land details.' },
-    { id: 'gs2', title: 'Pradhan Mantri Fasal Bima Yojana (PMFBY)', description: 'Crop insurance against yield losses.', howToApply: 'Contact your nearest bank or insurance company during the enrollment period.' },
-    { id: 'gs3', title: 'Soil Health Card Scheme', description: 'Provides farmers with information on the nutrient status of their soil.', howToApply: 'Contact the local agricultural department to get your soil tested.' },
+    { id: 'gs1', title: 'scheme1_title', description: 'scheme1_desc', howToApply: 'scheme1_apply' },
+    { id: 'gs2', title: 'scheme2_title', description: 'scheme2_desc', howToApply: 'scheme2_apply' },
+    { id: 'gs3', title: 'scheme3_title', description: 'scheme3_desc', howToApply: 'scheme3_apply' },
 ];
 
 export const mockCropData: CropInfo[] = [
@@ -52,24 +55,3 @@ export const mockCropData: CropInfo[] = [
     { id: 'c4', name: 'Sugarcane' },
     { id: 'c5', name: 'Cotton' },
 ]
-
-export const mockPlaceholderImages: ImagePlaceholder[] = [
-  {
-    id: 'voice-ledger',
-    description: 'A person writing in a ledger book in a field.',
-    imageUrl: 'https://picsum.photos/seed/1/600/400',
-    imageHint: 'farm ledger'
-  },
-  {
-    id: 'pest-alert',
-    description: 'A magnifying glass over a leaf with a bug on it.',
-    imageUrl: 'https://picsum.photos/seed/2/600/400',
-    imageHint: 'pest inspection'
-  },
-  {
-    id: 'ai-insights',
-    description: 'Abstract representation of data and charts over a farm background.',
-    imageUrl: 'https://picsum.photos/seed/3/600/400',
-    imageHint: 'data analytics'
-  }
-];
