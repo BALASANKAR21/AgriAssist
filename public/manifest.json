@@ -1,16 +1,21 @@
 {
-  "name": "AgriAssist",
-  "short_name": "AgriAssist",
-  "description": "Your AI-powered assistant for modern farming.",
+  "name": "Agri",
+  "short_name": "Agri",
+  "description": "A Comprehensive, Offline-First, Voice-Enabled Agricultural PWA for Next Billion Users.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FFFDD0",
-  "theme_color": "#388E3C",
+  "background_color": "#030712",
+  "theme_color": "#22c55e",
   "icons": [
     {
-      "src": "/logo.svg",
-      "sizes": "any",
-      "type": "image/svg+xml"
-    }
-  ]
-}
+      "src": "favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icon-512.png",

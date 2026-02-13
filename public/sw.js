@@ -1,69 +1,81 @@
-const CACHE_NAME = 'agriassist-cache-v1';
+// A basic service worker for PWA functionality
 
-const PRECACHE_URLS = [
+const CACHE_NAME = 'agri-pwa-cache-v1';
+const urlsToCache = [
   '/',
+  '/login',
   '/voice-ledger',
   '/community-pest-alert',
-  '/manifest.json',
-  '/logo.svg',
+  '/fertilizer-calculator',
+  '/gov-schemes',
+  '/market-trends',
+  '/crop-recommender',
+  '/disease-detection'
 ];
 
+// Install the service worker and cache the app shell
 self.addEventListener('install', event => {
+  console.log('Service Worker: Installing...');
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(PRECACHE_URLS);
-    }).catch(err => {
-      console.error('Failed to cache during install:', err);
-    })
+    caches.open(CACHE_NAME)
+      .then(cache => {
+        console.log('Service Worker: Caching app shell');
+        // Add all the URLs to the cache
+        return cache.addAll(urlsToCache);
+      })
+      .catch(err => {
+        console.error('Service Worker: Caching failed', err);
+      })
   );
 });
 
+// Activate the service worker and clean up old caches
 self.addEventListener('activate', event => {
+  console.log('Service Worker: Activating...');
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames.map(cacheName => {
           if (cacheWhitelist.indexOf(cacheName) === -1) {
+            console.log('Service Worker: Deleting old cache', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
     })
   );
+  return self.clients.claim();
 });
 
+// Fetch event: serve from cache first, then network
 self.addEventListener('fetch', event => {
-  // We only want to handle GET requests.
+  // We only want to cache GET requests
   if (event.request.method !== 'GET') {
     return;
   }
-  
-  event.respondWith(
-    caches.match(event.request).then(response => {
-      // Cache hit - return response
-      if (response) {
-        return response;
-      }
 
-      return fetch(event.request).then(response => {
-        // Check if we received a valid response
-        if (!response || response.status !== 200 || response.type !== 'basic') {
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => {
+        // Cache hit - return response
+        if (response) {
           return response;
         }
 
-        // IMPORTANT: Clone the response. A response is a stream
-        // and because we want the browser to consume the response
-        // as well as the cache consuming the response, we need
-        // to clone it so we have two streams.
-        const responseToCache = response.clone();
+        // Clone the request to use it both for fetching and for caching
+        const fetchRequest = event.request.clone();
 
-        caches.open(CACHE_NAME).then(cache => {
-          cache.put(event.request, responseToCache);
-        });
+        return fetch(fetchRequest).then(
+          response => {
+            // Check if we received a valid response
+            if (!response || response.status !== 200 || response.type !== 'basic') {
+              return response;
+            }
 
-        return response;
-      });
-    })
-  );
-});
+            // Clone the response to put it in the cache
+            const responseToCache = response.clone();
+
+            caches.open(CACHE_NAME)
+              .then(cache => {
+                cache.put(event
