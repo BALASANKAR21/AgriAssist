@@ -3,19 +3,19 @@
     {
       "id": "voice-ledger",
       "description": "A person writing in a ledger book in a field.",
-      "imageUrl": "https://images.unsplash.com/photo-1623071593183-c1b220cd3b65?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxmYXJtJTIwbGVkZ2VyfGVufDB8fHx8MTc3MDk3MDExN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1620387642470-9241972f10e1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxmYXJtJTIwbGVkZ2VyfGVufDB8fHx8MTc3MDk3MDExN3ww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "farm ledger"
     },
     {
       "id": "pest-alert",
       "description": "A magnifying glass over a leaf with a bug on it.",
-      "imageUrl": "https://images.unsplash.com/photo-1631035532097-621594828423?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxwZXN0JTIwaW5zcGVjdGlvbnxlbnwwfHx8fDE3NzA5NzAxMTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1743899726434-ba3da98e9c39?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxwZXN0JTIwaW5zcGVjdGlvbnxlbnwwfHx8fDE3NzA5NzAxMTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "pest inspection"
     },
     {
       "id": "ai-insights",
       "description": "Abstract representation of data and charts over a farm background.",
-      "imageUrl": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxkYXRhJTIwYW5hbHl0aWNzfGVufDB8fHx8MTc3MDk2NTk2Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1584291527908-033f4d6542c8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8ZGF0YSUyMGFuYWx5dGljc3xlbnwwfHx8fDE3NzA5NjU5NjJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "data analytics"
     }
   ]

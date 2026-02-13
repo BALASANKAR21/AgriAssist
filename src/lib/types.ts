@@ -1,5 +1,3 @@
-import type { AgriculturalRecommendationsOutput } from "@/ai/flows/agricultural-recommendations";
-
 export type Expense = {
   id: string;
   item: string;
@@ -25,4 +23,29 @@ export type ImagePlaceholder = {
   imageHint: string;
 };
 
-export type AIInsight = AgriculturalRecommendationsOutput;
+export type AIInsight = {
+    summary: string;
+    recommendations: {
+        category: string;
+        advice: string;
+        potentialImpact?: string;
+    }[];
+    contextualDetails?: string;
+};
+
+export type MarketPrice = {
+  date: string;
+  price: number;
+};
+
+export type GovernmentScheme = {
+  id: string;
+  title: string;
+  description: string;
+  howToApply: string;
+};
+
+export type CropInfo = {
+    id: string;
+    name: string;
+};

@@ -1,89 +1,82 @@
 "use client";
 
-import { useState } from 'react';
-import { APIProvider, Map, AdvancedMarker, Pin, InfoWindow } from '@vis.gl/react-google-maps';
 import { PestAlert } from '@/lib/types';
+import { MapContainer, TileLayer, Marker, Circle, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+import { useTheme } from 'next-themes';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { AlertTriangle, Bug } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
+import { AlertTriangle } from 'lucide-react';
+
+const icon = L.icon({
+    iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+    iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+    shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+});
+L.Marker.prototype.options.icon = icon;
+
 
 type PestMapProps = {
   alerts: PestAlert[];
 };
 
 export function PestMap({ alerts }: PestMapProps) {
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-  const [selectedAlert, setSelectedAlert] = useState<PestAlert | null>(null);
-
-  if (!apiKey) {
+  const { resolvedTheme } = useTheme();
+  
+  if (typeof window === 'undefined') {
     return (
-      <Card className="mt-4 border-destructive bg-destructive/10">
-        <CardHeader className="flex flex-row items-center gap-4">
-          <AlertTriangle className="w-10 h-10 text-destructive" />
-          <div>
-            <CardTitle className="text-destructive">Map Configuration Error</CardTitle>
-            <CardDescription className="text-destructive/80">
-              The Google Maps API key is missing. Please add it to your environment variables as NEXT_PUBLIC_GOOGLE_MAPS_API_KEY to display the map.
-            </CardDescription>
-          </div>
-        </CardHeader>
-      </Card>
+        <div className="h-[60vh] w-full bg-muted rounded-lg flex items-center justify-center">
+            <p>Loading Map...</p>
+        </div>
     );
   }
-  
-  const mapCenter = alerts.length > 0 ? alerts[0].location : { lat: 34.052235, lng: -118.243683 };
 
-  const getPinColor = (severity: 'Low' | 'Medium' | 'High') => {
+  const mapCenter: [number, number] = alerts.length > 0 ? [alerts[0].location.lat, alerts[0].location.lng] : [28.6139, 77.2090];
+  
+  const getSeverityColor = (severity: 'Low' | 'Medium' | 'High') => {
     switch (severity) {
-      case 'High': return 'hsl(var(--destructive))';
-      case 'Medium': return 'hsl(var(--secondary))';
-      case 'Low': return 'hsl(var(--primary))';
+      case 'High': return 'red';
+      case 'Medium': return 'orange';
+      case 'Low': return 'yellow';
       default: return 'grey';
     }
   };
 
   return (
-    <APIProvider apiKey={apiKey}>
-      <div style={{ height: '60vh', width: '100%', borderRadius: 'var(--radius)' }} className="overflow-hidden border">
-        <Map
-          defaultCenter={mapCenter}
-          defaultZoom={12}
-          mapId="agriassist-map"
-          gestureHandling={'greedy'}
-          disableDefaultUI={true}
-        >
-          {alerts.map(alert => (
-            <AdvancedMarker
-              key={alert.id}
-              position={alert.location}
-              onClick={() => setSelectedAlert(alert)}
-            >
-              <Pin
-                background={getPinColor(alert.severity)}
-                borderColor={'hsl(var(--card))'}
-                glyphColor={'hsl(var(--card))'}
-              >
-                <Bug className="w-4 h-4" />
-              </Pin>
-            </AdvancedMarker>
-          ))}
-          {selectedAlert && (
-             <InfoWindow
-                position={selectedAlert.location}
-                onCloseClick={() => setSelectedAlert(null)}
-             >
-                <div className="p-2 max-w-xs">
-                    <h3 className="font-bold text-lg text-foreground">{selectedAlert.pestName}</h3>
-                    <p className="text-sm text-muted-foreground">Severity: <span style={{color: getPinColor(selectedAlert.severity)}} className="font-semibold">{selectedAlert.severity}</span></p>
-                    <p className="text-sm">{selectedAlert.description}</p>
-                    <p className="text-xs text-muted-foreground mt-2">
-                        Reported {formatDistanceToNow(selectedAlert.reportedAt, { addSuffix: true })}
-                    </p>
-                </div>
-             </InfoWindow>
-          )}
-        </Map>
-      </div>
-    </APIProvider>
+    <div style={{ height: '60vh', width: '100%' }} className="rounded-lg overflow-hidden border">
+        <MapContainer center={mapCenter} zoom={12} style={{ height: '100%', width: '100%' }}>
+            <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url={resolvedTheme === 'dark' 
+                    ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+                    : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+                }
+            />
+            {alerts.map(alert => (
+                <Marker key={alert.id} position={[alert.location.lat, alert.location.lng]}>
+                    <Popup>
+                        <div className="p-1">
+                            <h3 className="font-bold text-lg">{alert.pestName}</h3>
+                            <p>Severity: <span style={{ color: getSeverityColor(alert.severity) }}>{alert.severity}</span></p>
+                            <p>{alert.description}</p>
+                        </div>
+                    </Popup>
+                </Marker>
+            ))}
+             {alerts.map(alert => (
+                <Circle
+                    key={`circle-${alert.id}`}
+                    center={[alert.location.lat, alert.location.lng]}
+                    pathOptions={{ color: getSeverityColor(alert.severity), fillColor: getSeverityColor(alert.severity) }}
+                    radius={alert.severity === 'High' ? 3000 : 1500} // Larger radius for high severity
+                    fillOpacity={0.2}
+                />
+             ))}
+        </MapContainer>
+    </div>
   );
 }

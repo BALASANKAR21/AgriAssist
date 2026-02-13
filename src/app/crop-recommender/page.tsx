@@ -10,7 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
-import { Leaf, Droplets, MapPin, CheckCircle2 } from "lucide-react";
+import { Leaf, LandPlot, MapPin, CheckCircle2, Sprout } from "lucide-react";
 
 const recommenderSchema = z.object({
   soilType: z.enum(["Loam", "Clay", "Sandy", "Silt"]),
@@ -19,10 +19,10 @@ const recommenderSchema = z.object({
 });
 
 const steps = [
-  { id: 1, title: "Soil Type", icon: Leaf },
-  { id: 2, title: "Land Size", icon: Droplets },
-  { id: 3, title: "Region", icon: MapPin },
-];
+  { id: 1, title: "Soil Type", icon: Sprout, field: "soilType" },
+  { id: 2, title: "Land Size", icon: LandPlot, field: "landSize" },
+  { id: 3, title: "Region", icon: MapPin, field: "region" },
+] as const;
 
 const mockRecommendations = {
   North: ["Wheat", "Mustard", "Sugarcane"],
@@ -46,16 +46,13 @@ export default function CropRecommenderPage() {
   const progress = ((currentStep + 1) / (steps.length + (recommendations ? 1 : 0))) * 100;
 
   async function onSubmit(data: z.infer<typeof recommenderSchema>) {
-    // In a real app, this would be an API call to a recommendation engine
     setRecommendations(mockRecommendations[data.region] || ["No recommendations for this region."]);
     setCurrentStep(steps.length);
   }
 
   const handleNext = async () => {
-    let isValid = false;
-    if (currentStep === 0) isValid = await form.trigger("soilType");
-    if (currentStep === 1) isValid = await form.trigger("landSize");
-    if (currentStep === 2) isValid = await form.trigger("region");
+    const currentField = steps[currentStep].field;
+    const isValid = await form.trigger(currentField);
 
     if (isValid && currentStep < steps.length - 1) {
       setCurrentStep(prev => prev + 1);
@@ -70,20 +67,26 @@ export default function CropRecommenderPage() {
     }
     setCurrentStep(prev => Math.max(0, prev - 1));
   };
+  
+  const resetForm = () => {
+    setCurrentStep(0);
+    setRecommendations(null);
+    form.reset();
+  }
 
   return (
     <div className="container mx-auto p-4 md:p-8">
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
-          <CardTitle className="font-headline text-3xl">Crop Recommender</CardTitle>
+          <CardTitle className="text-3xl font-bold flex items-center gap-3"><Leaf/> Crop Recommender</CardTitle>
           <CardDescription>Get suggestions for the best crops to plant.</CardDescription>
         </CardHeader>
         <CardContent>
-          <Progress value={progress} className="mb-8" />
+          <Progress value={progress} className="mb-8 h-3" />
           
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              {steps.map((step, index) => (
+              {!recommendations ? steps.map((step, index) => (
                 <div key={step.id} className={currentStep === index ? "block" : "hidden"}>
                   <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
                     <step.icon className="w-6 h-6 text-primary" />
@@ -98,7 +101,7 @@ export default function CropRecommenderPage() {
                           <FormLabel>What is the primary soil type of your farm?</FormLabel>
                            <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
-                              <SelectTrigger><SelectValue placeholder="Select soil type" /></SelectTrigger>
+                              <SelectTrigger className="h-12 text-lg"><SelectValue placeholder="Select soil type" /></SelectTrigger>
                             </FormControl>
                             <SelectContent>
                               <SelectItem value="Loam">Loam</SelectItem>
@@ -120,7 +123,7 @@ export default function CropRecommenderPage() {
                         <FormItem>
                           <FormLabel>What is the size of your land in acres?</FormLabel>
                           <FormControl>
-                            <Input type="number" placeholder="e.g., 5.5" {...field} />
+                            <Input type="number" placeholder="e.g., 5.5" {...field} className="h-12 text-lg"/>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -136,7 +139,7 @@ export default function CropRecommenderPage() {
                           <FormLabel>Which region is your farm located in?</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
-                              <SelectTrigger><SelectValue placeholder="Select region" /></SelectTrigger>
+                              <SelectTrigger className="h-12 text-lg"><SelectValue placeholder="Select region" /></SelectTrigger>
                             </FormControl>
                             <SelectContent>
                               <SelectItem value="North">North</SelectItem>
@@ -152,7 +155,7 @@ export default function CropRecommenderPage() {
                     />
                   )}
                 </div>
-              ))}
+              )) : null}
 
               {recommendations && (
                 <div>
@@ -171,16 +174,21 @@ export default function CropRecommenderPage() {
               )}
 
               <div className="flex justify-between pt-4">
-                <Button type="button" variant="outline" onClick={handleBack} disabled={currentStep === 0}>
+                <Button type="button" variant="outline" onClick={handleBack} disabled={currentStep === 0 && !recommendations} className="h-12 text-lg btn-48">
                   Back
                 </Button>
-                {currentStep < steps.length - 1 ? (
-                  <Button type="button" onClick={handleNext}>Next</Button>
+                {currentStep < steps.length - 1 && !recommendations ? (
+                  <Button type="button" onClick={handleNext} className="h-12 text-lg btn-48">Next</Button>
                 ) : !recommendations ? (
-                  <Button type="submit">Get Recommendations</Button>
+                  <Button type="submit" className="h-12 text-lg btn-48">Get Recommendations</Button>
                 ) : (
-                  <Button type="button" onClick={() => { setCurrentStep(0); setRecommendations(null); form.reset(); }}>Start Over</Button>
+                  <Button type="button" onClick={resetForm} className="h-12 text-lg btn-48">Start Over</Button>
                 )}
               </div>
             </form>
-          </Form
+          </Form>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, type ReactNode } from "react";
+import { useEffect, type ReactNode, Suspense } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { I18nextProvider } from 'react-i18next';
+import i18n from '@/lib/i18n';
+import { ThemeProvider } from 'next-themes';
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
 
   useEffect(() => {
-    if ('serviceWorker' in navigator) {
+    if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js').then(registration => {
           console.log('ServiceWorker registration successful with scope: ', registration.scope);
@@ -23,5 +26,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   }, [toast]);
 
-  return <>{children}</>;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <I18nextProvider i18n={i18n}>
+          {children}
+        </I18nextProvider>
+      </ThemeProvider>
+    </Suspense>
+  );
 }

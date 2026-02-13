@@ -4,15 +4,27 @@ import { Toaster } from '@/components/ui/toaster';
 import Header from '@/components/header';
 import { AppProvider } from '@/components/app-provider';
 import { cn } from '@/lib/utils';
+import { PT_Sans, Noto_Sans_Devanagari } from 'next/font/google';
+
+const pt_sans = PT_Sans({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  variable: '--font-sans',
+});
+
+const noto_sans_devanagari = Noto_Sans_Devanagari({
+  subsets: ['latin'],
+  variable: '--font-hindi',
+});
 
 export const metadata: Metadata = {
   title: 'AgriAssist',
-  description: 'Your AI-powered assistant for modern farming.',
-  manifest: "/manifest.json",
+  description: 'A Comprehensive, Offline-First, Voice-Enabled Agricultural PWA.',
+  manifest: '/manifest.json',
 };
 
 export const viewport: Viewport = {
-  themeColor: "#388E3C",
+  themeColor: '#388E3C',
 };
 
 export default function RootLayout({
@@ -22,17 +34,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet" />
-      </head>
-      <body className={cn("font-body antialiased min-h-screen flex flex-col")}>
+      <head />
+      <body className={cn(
+        "min-h-screen bg-background font-sans antialiased",
+        pt_sans.variable,
+        noto_sans_devanagari.variable
+      )}>
         <AppProvider>
-          <Header />
-          <main className="flex-1">
-            {children}
-          </main>
+          <div className="relative flex min-h-screen flex-col">
+            <Header />
+            <main className="flex-1">{children}</main>
+          </div>
           <Toaster />
         </AppProvider>
       </body>

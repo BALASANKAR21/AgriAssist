@@ -1,21 +1,21 @@
 {
-  "name": "Agri",
+  "name": "AgriAssist",
   "short_name": "Agri",
-  "description": "A Comprehensive, Offline-First, Voice-Enabled Agricultural PWA for Next Billion Users.",
+  "description": "A Comprehensive, Offline-First, Voice-Enabled Agricultural PWA.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#030712",
-  "theme_color": "#22c55e",
+  "background_color": "#FFFDD0",
+  "theme_color": "#388E3C",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "48x48",
-      "type": "image/x-icon"
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
     },
     {
-      "src": "/icon-192.png",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "/icon-512.png",
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

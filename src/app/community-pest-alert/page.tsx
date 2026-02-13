@@ -15,7 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { PestMap } from "./map-component";
 import { mockPestAlerts } from "@/lib/data";
 import type { PestAlert } from "@/lib/types";
-import { PlusCircle, Loader2 } from "lucide-react";
+import { PlusCircle, Loader2, MapPin } from "lucide-react";
 
 const reportSchema = z.object({
   pestName: z.string().min(3, "Pest name is required."),
@@ -38,10 +38,17 @@ export default function CommunityPestAlertPage() {
       pestName: "",
       description: "",
       severity: "Medium",
-      lat: 34.0522, // Default to a location
-      lng: -118.2437,
+      lat: 28.6139, // Default to a location
+      lng: 77.2090,
     },
   });
+  
+  // A real app would get this from navigator.geolocation
+  const getCurrentLocation = () => {
+    toast({ title: "Fetching Location...", description: "This is a mock-up." });
+    form.setValue('lat', 28.6139 + (Math.random() - 0.5) * 0.1);
+    form.setValue('lng', 77.2090 + (Math.random() - 0.5) * 0.1);
+  }
 
   function onSubmit(values: z.infer<typeof reportSchema>) {
     startTransition(() => {
@@ -68,24 +75,27 @@ export default function CommunityPestAlertPage() {
       <Card>
         <CardHeader className="flex-row items-center justify-between">
           <div>
-            <CardTitle className="font-headline text-3xl">Community Pest Alerts</CardTitle>
+            <CardTitle className="text-3xl font-bold flex items-center gap-3"><MapPin /> Community Pest Alerts</CardTitle>
             <CardDescription>See and report pest sightings in your community.</CardDescription>
           </div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button>
-                <PlusCircle className="mr-2 h-4 w-4" /> Report a Pest
+              <Button className="h-12 text-lg btn-48">
+                <PlusCircle className="mr-2 h-5 w-5" /> Report a Pest
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-lg">
               <DialogHeader>
-                <DialogTitle>Report a Pest Sighting</DialogTitle>
+                <DialogTitle className="text-2xl">Report a Pest Sighting</DialogTitle>
                 <DialogDescription>
                   Help your neighbors by reporting pest activity. Fill out the details below.
                 </DialogDescription>
               </DialogHeader>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+                    <Button type="button" variant="outline" onClick={getCurrentLocation} className="w-full">
+                        <MapPin className="mr-2 h-4 w-4" /> Use My Current Location
+                    </Button>
                   <FormField
                     control={form.control}
                     name="pestName"
@@ -93,7 +103,7 @@ export default function CommunityPestAlertPage() {
                       <FormItem>
                         <FormLabel>Pest Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="e.g., Corn Earworm" {...field} />
+                          <Input placeholder="e.g., Corn Earworm" {...field} className="h-12"/>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -107,7 +117,7 @@ export default function CommunityPestAlertPage() {
                         <FormLabel>Severity</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
-                            <SelectTrigger>
+                            <SelectTrigger className="h-12">
                               <SelectValue placeholder="Select severity" />
                             </SelectTrigger>
                           </FormControl>
@@ -134,11 +144,8 @@ export default function CommunityPestAlertPage() {
                       </FormItem>
                     )}
                   />
-                  {/* Hidden fields for location - would be set by map interaction in a full app */}
-                  <FormField control={form.control} name="lat" render={({ field }) => <Input type="hidden" {...field} />} />
-                  <FormField control={form.control} name="lng" render={({ field }) => <Input type="hidden" {...field} />} />
                   <DialogFooter>
-                    <Button type="submit" disabled={isPending}>
+                    <Button type="submit" disabled={isPending} className="h-12 text-lg btn-48">
                       {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                       Submit Report
                     </Button>

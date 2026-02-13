@@ -1,60 +1,26 @@
-// A basic service worker for PWA functionality
-
-const CACHE_NAME = 'agri-pwa-cache-v1';
+// A basic service worker for offline caching
+const CACHE_NAME = 'agri-assist-cache-v1';
 const urlsToCache = [
   '/',
-  '/login',
-  '/voice-ledger',
-  '/community-pest-alert',
-  '/fertilizer-calculator',
-  '/gov-schemes',
-  '/market-trends',
-  '/crop-recommender',
-  '/disease-detection'
+  '/manifest.json',
+  // Next.js handles its own static assets and chunks caching very well.
+  // This file is a placeholder for more advanced offline strategies if needed.
+  // For example, caching API calls for offline viewing.
 ];
 
-// Install the service worker and cache the app shell
 self.addEventListener('install', event => {
-  console.log('Service Worker: Installing...');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('Service Worker: Caching app shell');
-        // Add all the URLs to the cache
+        console.log('Service Worker: Opened cache');
         return cache.addAll(urlsToCache);
       })
-      .catch(err => {
-        console.error('Service Worker: Caching failed', err);
-      })
   );
+  self.skipWaiting();
 });
 
-// Activate the service worker and clean up old caches
-self.addEventListener('activate', event => {
-  console.log('Service Worker: Activating...');
-  const cacheWhitelist = [CACHE_NAME];
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            console.log('Service Worker: Deleting old cache', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
-  );
-  return self.clients.claim();
-});
-
-// Fetch event: serve from cache first, then network
 self.addEventListener('fetch', event => {
-  // We only want to cache GET requests
-  if (event.request.method !== 'GET') {
-    return;
-  }
-
+  // We will use a cache-first strategy for most things.
   event.respondWith(
     caches.match(event.request)
       .then(response => {
@@ -63,19 +29,45 @@ self.addEventListener('fetch', event => {
           return response;
         }
 
-        // Clone the request to use it both for fetching and for caching
-        const fetchRequest = event.request.clone();
-
-        return fetch(fetchRequest).then(
+        // Not in cache, go to network
+        return fetch(event.request).then(
           response => {
             // Check if we received a valid response
-            if (!response || response.status !== 200 || response.type !== 'basic') {
+            if(!response || response.status !== 200 || response.type !== 'basic') {
               return response;
             }
 
-            // Clone the response to put it in the cache
+            // IMPORTANT: Clone the response. A response is a stream
+            // and because we want the browser to consume the response
+            // as well as the cache consuming the response, we need
+            // to clone it so we have two streams.
             const responseToCache = response.clone();
 
             caches.open(CACHE_NAME)
               .then(cache => {
-                cache.put(event
+                cache.put(event.request, responseToCache);
+              });
+
+            return response;
+          }
+        );
+      })
+    );
+});
+
+self.addEventListener('activate', event => {
+  const cacheWhitelist = [CACHE_NAME];
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheWhitelist.indexOf(cacheName) === -1) {
+            // Deleting old caches
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+  return self.clients.claim();
+});

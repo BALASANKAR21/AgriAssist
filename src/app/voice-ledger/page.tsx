@@ -1,49 +1,71 @@
 "use client";
 
-import { useState, useEffect, useCallback, useTransition } from "react";
-import { Mic, MicOff, Lightbulb, Loader2, AlertTriangle } from "lucide-react";
+import { useState, useEffect, useTransition, useMemo } from "react";
+import { Mic, MicOff, Loader2, AlertTriangle, TrendingUp, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from "@/components/ui/sheet";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useSpeechRecognition, useTextToSpeech } from "@/hooks/use-speech";
 import { useToast } from "@/hooks/use-toast";
 import { mockExpenses } from "@/lib/data";
-import type { Expense, AIInsight } from "@/lib/types";
-import { getAgriculturalInsights, logExpenseFromVoice } from "./actions";
+import type { Expense } from "@/lib/types";
 import { format } from "date-fns";
+import { useTranslation } from "react-i18next";
+import { cn } from "@/lib/utils";
+
+const mockLogExpenseFromVoice = async (spokenExpense: string): Promise<Omit<Expense, 'id' | 'date'>> => {
+  // Mock AI parsing
+  const amountMatch = spokenExpense.match(/(\d+)/);
+  const amount = amountMatch ? parseFloat(amountMatch[0]) : 50; // default
+  let item = "Unknown";
+  if (spokenExpense.includes("seed") || spokenExpense.includes("बीज")) item = "Seeds";
+  else if (spokenExpense.includes("fertilizer") || spokenExpense.includes("उर्वरक")) item = "Fertilizer";
+  else if (spokenExpense.includes("fuel") || spokenExpense.includes("ईंधन")) item = "Fuel";
+  else if (spokenExpense.includes("pesticide") || spokenExpense.includes("कीटनाशक")) item = "Pesticides";
+  else if (spokenExpense.includes("labor") || spokenExpense.includes("मजदूरी")) item = "Labor";
+
+
+  return Promise.resolve({
+    item: item,
+    category: item,
+    amount: amount,
+    currency: "INR",
+  });
+}
 
 export default function VoiceLedgerPage() {
   const [expenses, setExpenses] = useState<Expense[]>(mockExpenses);
-  const [insights, setInsights] = useState<AIInsight | null>(null);
-  const [isInsightsLoading, startInsightsTransition] = useTransition();
   const [isLoggingLoading, startLoggingTransition] = useTransition();
-
+  const { t, i18n } = useTranslation();
   const { toast } = useToast();
   const { speak, isSupported: ttsSupported } = useTextToSpeech();
   
   const handleExpenseLogged = (transcript: string) => {
     startLoggingTransition(async () => {
       try {
-        const newExpenseData = await logExpenseFromVoice(transcript);
+        const newExpenseData = await mockLogExpenseFromVoice(transcript);
         const newExpense: Expense = {
           ...newExpenseData,
           id: Date.now().toString(),
           date: new Date(),
         };
         setExpenses(prev => [newExpense, ...prev]);
-        toast({ title: "Expense Logged", description: `${newExpense.item} for ${newExpense.amount} ${newExpense.currency}` });
-        if (ttsSupported) speak(`Expense logged: ${newExpense.item} for ${newExpense.amount} dollars.`);
+        toast({ title: t("expense_logged"), description: t("expense_logged_desc", { item: newExpense.item, amount: newExpense.amount, currency: newExpense.currency }) });
+        if (ttsSupported) speak(t("expense_logged_speak", { item: newExpense.item, amount: newExpense.amount }));
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
-        toast({ variant: "destructive", title: "Logging Failed", description: errorMessage });
-        if (ttsSupported) speak("Sorry, I couldn't log that. Please try again.");
+        toast({ variant: "destructive", title: t("logging_failed"), description: errorMessage });
+        if (ttsSupported) speak(t("logging_failed_speak"));
       }
     });
   };
   
-  const { isListening, transcript, startListening, stopListening, error, isSupported: sttSupported } = useSpeechRecognition();
+  const { isListening, transcript, startListening, stopListening, error, isSupported: sttSupported } = useSpeechRecognition({lang: i18n.language});
+
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
     if (!isListening && transcript) {
@@ -54,137 +76,106 @@ export default function VoiceLedgerPage() {
 
   useEffect(() => {
     if (error) {
-      toast({ variant: "destructive", title: "Speech Error", description: error });
+      toast({ variant: "destructive", title: t("assistant_error_title"), description: error });
     }
-  }, [error, toast]);
+  }, [error, toast, t]);
 
-  const handleFetchInsights = () => {
-    startInsightsTransition(async () => {
-      try {
-        const result = await getAgriculturalInsights(expenses);
-        setInsights(result);
-        if (ttsSupported) speak("Your AI insights are ready.");
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
-        toast({ variant: "destructive", title: "Insights Failed", description: errorMessage });
-      }
-    });
-  };
+  const totalExpenses = useMemo(() => {
+    return expenses.reduce((total, exp) => total + exp.amount, 0);
+  }, [expenses]);
+  
+  const mockRevenue = totalExpenses * 2.5;
+  const totalProfit = mockRevenue - totalExpenses;
+
+  const currencyFormat = (value: number) => new Intl.NumberFormat(i18n.language === 'hi' ? 'hi-IN' : 'en-IN', { style: 'currency', currency: 'INR' }).format(value);
 
   return (
     <div className="container mx-auto p-4 md:p-8">
-      <Card>
+      <Card className="max-w-4xl mx-auto">
         <CardHeader>
-          <CardTitle className="font-headline text-3xl">Voice Expense Ledger</CardTitle>
+          <CardTitle className="text-3xl font-bold flex items-center gap-3"><Wallet/> {t('voice_ledger_title')}</CardTitle>
           <CardDescription>
-            Press the microphone to start logging your expenses with your voice. Press it again to stop.
+            {t('voice_ledger_desc')}
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
-          {!sttSupported && (
+        <CardContent className="space-y-6 flex flex-col items-center">
+          {isClient && !sttSupported && (
             <div className="flex items-center gap-2 text-destructive bg-destructive/10 p-3 rounded-md">
                 <AlertTriangle className="h-5 w-5" />
-                <p>Your browser does not support speech recognition. Please use a different browser like Chrome or Safari.</p>
+                <p>{t('log_expense_browser_unsupported')}</p>
             </div>
           )}
-          <div className="flex flex-col sm:flex-row items-center gap-4">
+          <div className="flex flex-col items-center gap-4 my-8">
             <Button
               onClick={isListening ? stopListening : startListening}
-              disabled={!sttSupported || isLoggingLoading}
-              size="lg"
-              className={isListening ? 'bg-accent text-accent-foreground animate-pulse-mic' : ''}
+              disabled={!isClient || !sttSupported || isLoggingLoading}
+              aria-label={isListening ? t('stop_listening') : t('start_listening')}
+              className={cn(
+                "h-48 w-48 rounded-full text-5xl transition-all duration-300 shadow-2xl flex flex-col",
+                isListening ? 'bg-red-500 hover:bg-red-600 animate-pulse' : 'bg-primary hover:bg-primary/90'
+              )}
             >
               {isLoggingLoading ? (
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                <Loader2 className="h-16 w-16 animate-spin" />
               ) : isListening ? (
-                <MicOff className="mr-2 h-5 w-5" />
+                <MicOff size={80} />
               ) : (
-                <Mic className="mr-2 h-5 w-5" />
+                <Mic size={80} />
               )}
-              {isLoggingLoading ? 'Processing...' : isListening ? 'Stop Listening' : 'Start Listening'}
             </Button>
-            <p className="text-sm text-muted-foreground h-10 flex items-center">
-                {isListening ? `Listening... Say your expense.` : (transcript ? `Last entry: "${transcript}"` : "Press the button to begin.")}
+             <p className="text-lg text-muted-foreground h-10 flex items-center text-center mt-4">
+                {isLoggingLoading ? t('processing') : isListening ? t('assistant_listening') : (transcript ? t('last_entry', {transcript}) : t('press_to_begin'))}
             </p>
           </div>
           
-          <div className="flex justify-between items-center border-t pt-6">
-            <h2 className="text-2xl font-headline">Recent Expenses</h2>
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button onClick={handleFetchInsights} disabled={isInsightsLoading} variant="secondary">
-                  {isInsightsLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Lightbulb className="mr-2 h-4 w-4" />}
-                  Get AI Insights
-                </Button>
-              </SheetTrigger>
-              <SheetContent className="w-full sm:max-w-lg overflow-y-auto" side="right" id="insights">
-                <SheetHeader>
-                  <SheetTitle className="font-headline text-2xl">AI-Powered Insights</SheetTitle>
-                  <SheetDescription>Recommendations based on your recent expenses.</SheetDescription>
-                </SheetHeader>
-                <div className="py-4">
-                  {isInsightsLoading && <div className="flex justify-center items-center py-10"><Loader2 className="h-8 w-8 animate-spin text-primary"/></div>}
-                  {insights && (
-                    <div className="space-y-4">
-                      <Card className="bg-primary/5">
-                        <CardHeader>
-                          <CardTitle className="text-lg">Summary</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <p>{insights.summary}</p>
-                        </CardContent>
-                      </Card>
-                      <Accordion type="single" collapsible className="w-full">
-                        {insights.recommendations.map((rec, index) => (
-                           <AccordionItem value={`item-${index}`} key={index}>
-                              <AccordionTrigger>{rec.category}: {rec.advice.substring(0, 40)}...</AccordionTrigger>
-                              <AccordionContent className="space-y-2">
-                                <p><strong>Advice:</strong> {rec.advice}</p>
-                                {rec.potentialImpact && <p><strong>Potential Impact:</strong> {rec.potentialImpact}</p>}
-                              </AccordionContent>
-                            </AccordionItem>
-                        ))}
-                      </Accordion>
-                       {insights.contextualDetails && (
-                        <Card className="bg-secondary/10">
-                            <CardHeader>
-                                <CardTitle className="text-lg">Contextual Details</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p>{insights.contextualDetails}</p>
-                            </CardContent>
-                        </Card>
-                       )}
+           <Card className="bg-green-500/10 border-green-200 dark:bg-green-500/10 w-full">
+                <CardHeader>
+                    <CardTitle className="text-2xl flex items-center gap-3"><TrendingUp className="text-primary"/> {t('financial_summary')}</CardTitle>
+                </CardHeader>
+                <CardContent className="text-center space-y-4">
+                    <div className="flex flex-col md:flex-row justify-around items-center gap-4">
+                        <div className="p-4 rounded-lg">
+                            <p className="text-3xl md:text-4xl font-bold text-destructive">
+                                -{currencyFormat(totalExpenses)}
+                            </p>
+                            <p className="text-muted-foreground">{t('total_expenses')}</p>
+                        </div>
+                        <div className="p-4 rounded-lg">
+                            <p className="text-3xl md:text-4xl font-bold text-primary">
+                                {currencyFormat(totalProfit)}
+                            </p>
+                            <p className="text-muted-foreground">{t('total_profit_mock')}</p>
+                        </div>
                     </div>
-                  )}
-                  {!insights && !isInsightsLoading && <p className="text-center text-muted-foreground py-10">Click "Get AI Insights" to see recommendations.</p>}
-                </div>
-              </SheetContent>
-            </Sheet>
+                </CardContent>
+            </Card>
+          
+          <div className="border-t pt-6 w-full">
+            <h2 className="text-2xl font-bold">{t('recent_expenses')}</h2>
           </div>
           
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto w-full">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Item</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
+                  <TableHead className="text-base">{t('date')}</TableHead>
+                  <TableHead className="text-base">{t('item')}</TableHead>
+                  <TableHead className="text-base">{t('category')}</TableHead>
+                  <TableHead className="text-right text-base">{t('amount')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {expenses.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={4} className="text-center h-24">No expenses logged yet.</TableCell>
+                    <TableCell colSpan={4} className="text-center h-24">{t('no_expenses_logged')}</TableCell>
                   </TableRow>
                 ) : (
                   expenses.map(exp => (
-                    <TableRow key={exp.id}>
+                    <TableRow key={exp.id} className="text-lg">
                       <TableCell>{format(exp.date, "MMM d, yyyy")}</TableCell>
                       <TableCell className="font-medium">{exp.item}</TableCell>
                       <TableCell>{exp.category}</TableCell>
-                      <TableCell className="text-right">{new Intl.NumberFormat('en-US', { style: 'currency', currency: exp.currency }).format(exp.amount)}</TableCell>
+                      <TableCell className="text-right">{currencyFormat(exp.amount)}</TableCell>
                     </TableRow>
                   ))
                 )}
