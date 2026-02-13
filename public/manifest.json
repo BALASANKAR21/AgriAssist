@@ -1,0 +1,16 @@
+{
+  "name": "AgriAssist",
+  "short_name": "AgriAssist",
+  "description": "Your AI-powered assistant for modern farming.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFDD0",
+  "theme_color": "#388E3C",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
