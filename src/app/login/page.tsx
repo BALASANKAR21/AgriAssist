@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
+import { Sprout } from "lucide-react";
 
 const loginSchema = z.object({
   phoneNumber: z.string().min(10, "Please enter a valid 10-digit phone number."),
@@ -31,16 +32,17 @@ export default function LoginPage() {
   function onSubmit(values: z.infer<typeof loginSchema>) {
     console.log(values);
     i18n.changeLanguage(values.language);
-    // Mock login logic
+    // Mock login logic - in a real app, you would send an OTP
     router.push("/");
   }
 
   return (
-    <div className="container flex min-h-[80vh] items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
+    <div className="container flex min-h-[calc(100vh-10rem)] items-center justify-center p-4">
+      <Card className="w-full max-w-md shadow-2xl">
+        <CardHeader className="text-center space-y-4">
+          <Sprout className="h-16 w-16 text-primary mx-auto" />
           <CardTitle className="text-3xl font-bold">{t('login_title')}</CardTitle>
-          <CardDescription>{t('login_description')}</CardDescription>
+          <CardDescription className="text-lg">{t('login_description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -50,9 +52,9 @@ export default function LoginPage() {
                 name="phoneNumber"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('phone_number')}</FormLabel>
+                    <FormLabel className="text-base">{t('phone_number')}</FormLabel>
                     <FormControl>
-                      <Input type="tel" placeholder="9876543210" {...field} className="h-14 text-lg"/>
+                      <Input type="tel" placeholder="98765 43210" {...field} className="h-14 text-lg"/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -63,7 +65,7 @@ export default function LoginPage() {
                 name="language"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('language')}</FormLabel>
+                    <FormLabel className="text-base">{t('language')}</FormLabel>
                     <Select onValueChange={(value) => {
                       field.onChange(value);
                       i18n.changeLanguage(value);

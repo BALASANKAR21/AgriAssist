@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 const mockLogExpenseFromVoice = async (spokenExpense: string): Promise<Omit<Expense, 'id' | 'date'>> => {
   // Mock AI parsing
   const amountMatch = spokenExpense.match(/(\d+)/);
-  const amount = amountMatch ? parseFloat(amountMatch[0]) : 50; // default
+  const amount = amountMatch ? parseFloat(amountMatch[0]) : 500; // default
   let item = "Unknown";
   if (spokenExpense.includes("seed") || spokenExpense.includes("बीज")) item = "Seeds";
   else if (spokenExpense.includes("fertilizer") || spokenExpense.includes("उर्वरक")) item = "Fertilizer";
@@ -50,7 +50,8 @@ export default function VoiceLedgerPage() {
           date: new Date(),
         };
         setExpenses(prev => [newExpense, ...prev]);
-        toast({ title: t("expense_logged"), description: t("expense_logged_desc", { item: newExpense.item, amount: newExpense.amount, currency: newExpense.currency }) });
+        const formattedAmount = currencyFormat(newExpense.amount);
+        toast({ title: t("expense_logged"), description: t("expense_logged_desc", { item: newExpense.item, amount: formattedAmount }) });
         if (ttsSupported) speak(t("expense_logged_speak", { item: newExpense.item, amount: newExpense.amount }));
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
@@ -87,14 +88,14 @@ export default function VoiceLedgerPage() {
   const mockRevenue = totalExpenses * 2.5;
   const totalProfit = mockRevenue - totalExpenses;
 
-  const currencyFormat = (value: number) => new Intl.NumberFormat(i18n.language === 'hi' ? 'hi-IN' : 'en-IN', { style: 'currency', currency: 'INR' }).format(value);
+  const currencyFormat = (value: number) => new Intl.NumberFormat(i18n.language === 'hi' ? 'hi-IN' : 'en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(value);
 
   return (
     <div className="container mx-auto p-4 md:p-8">
       <Card className="max-w-4xl mx-auto">
         <CardHeader>
           <CardTitle className="text-3xl font-bold flex items-center gap-3"><Wallet/> {t('voice_ledger_title')}</CardTitle>
-          <CardDescription>
+          <CardDescription className="text-lg">
             {t('voice_ledger_desc')}
           </CardDescription>
         </CardHeader>

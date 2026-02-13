@@ -3,7 +3,7 @@ export type Expense = {
   item: string;
   category: string;
   amount: number;
-  currency: string;
+  currency: 'INR' | 'USD'; // Supporting INR for Indian market
   date: Date;
 };
 
@@ -35,7 +35,7 @@ export type AIInsight = {
 
 export type MarketPrice = {
   date: string;
-  price: number;
+  price: number; // Price per Quintal in INR
 };
 
 export type GovernmentScheme = {

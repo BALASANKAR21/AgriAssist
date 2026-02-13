@@ -25,7 +25,7 @@ export default function ProfitPredictionPage() {
     resolver: zodResolver(profitSchema),
     defaultValues: {
       expectedYield: 10,
-      marketPrice: 2000,
+      marketPrice: 2500, // Updated for Indian context (e.g., price per Quintal)
     },
   });
 
@@ -33,7 +33,7 @@ export default function ProfitPredictionPage() {
     return mockExpenses.reduce((total, exp) => total + exp.amount, 0);
   }, []);
 
-  const currencyFormat = (value: number) => new Intl.NumberFormat(i18n.language === 'hi' ? 'hi-IN' : 'en-IN', { style: 'currency', currency: 'INR' }).format(value);
+  const currencyFormat = (value: number) => new Intl.NumberFormat(i18n.language === 'hi' ? 'hi-IN' : 'en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(value);
 
   function onSubmit(data: z.infer<typeof profitSchema>) {
     const revenue = data.expectedYield * data.marketPrice;
@@ -46,7 +46,7 @@ export default function ProfitPredictionPage() {
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle className="text-3xl font-bold flex items-center gap-3"><CircleDollarSign /> {t('profit_prediction_title')}</CardTitle>
-          <CardDescription>{t('profit_prediction_desc')}</CardDescription>
+          <CardDescription className="text-lg">{t('profit_prediction_desc')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -56,9 +56,9 @@ export default function ProfitPredictionPage() {
                 name="expectedYield"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('expected_yield')}</FormLabel>
+                    <FormLabel className="text-base">{t('expected_yield')}</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="e.g., 50" {...field} className="h-12 text-lg"/>
+                      <Input type="number" placeholder="e.g., 10" {...field} className="h-12 text-lg"/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -69,7 +69,7 @@ export default function ProfitPredictionPage() {
                 name="marketPrice"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('expected_market_price')}</FormLabel>
+                    <FormLabel className="text-base">{t('expected_market_price')}</FormLabel>
                     <FormControl>
                       <Input type="number" placeholder="e.g., 2500" {...field} className="h-12 text-lg"/>
                     </FormControl>

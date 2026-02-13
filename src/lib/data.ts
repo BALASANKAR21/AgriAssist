@@ -1,10 +1,10 @@
 import type { Expense, PestAlert, ImagePlaceholder, MarketPrice, GovernmentScheme, CropInfo } from './types';
 
 export const mockExpenses: Expense[] = [
-  { id: '1', item: 'Corn Seeds', category: 'Seeds', amount: 150.75, currency: 'USD', date: new Date('2024-05-01') },
-  { id: '2', item: 'Tractor Fuel', category: 'Fuel', amount: 85.20, currency: 'USD', date: new Date('2024-05-03') },
-  { id: '3', item: 'Nitrogen Fertilizer', category: 'Fertilizer', amount: 320.00, currency: 'USD', date: new Date('2024-05-05') },
-  { id: '4', item: 'Part-time labor', category: 'Labor', amount: 200.00, currency: 'USD', date: new Date('2024-05-10') },
+  { id: '1', item: 'Corn Seeds', category: 'Seeds', amount: 3500, currency: 'INR', date: new Date('2024-05-01') },
+  { id: '2', item: 'Tractor Fuel', category: 'Fuel', amount: 2500, currency: 'INR', date: new Date('2024-05-03') },
+  { id: '3', item: 'Nitrogen Fertilizer', category: 'Fertilizer', amount: 8000, currency: 'INR', date: new Date('2024-05-05') },
+  { id: '4', item: 'Part-time labor', category: 'Labor', amount: 10000, currency: 'INR', date: new Date('2024-05-10') },
 ];
 
 export const mockPestAlerts: PestAlert[] = [
@@ -27,16 +27,16 @@ export const mockPestAlerts: PestAlert[] = [
 ];
 
 export const mockMarketPrices: MarketPrice[] = [
-  { date: '2024-05-01', price: 180 },
-  { date: '2024-05-02', price: 182 },
-  { date: '2024-05-03', price: 181 },
-  { date: '2024-05-04', price: 185 },
-  { date: '2024-05-05', price: 188 },
-  { date: '2024-05-06', price: 190 },
-  { date: '2024-05-07', price: 187 },
-  { date: '2024-05-08', price: 192 },
-  { date: '2024-05-09', price: 195 },
-  { date: '2024-05-10', price: 193 },
+  { date: '2024-05-01', price: 2200 },
+  { date: '2024-05-02', price: 2250 },
+  { date: '2024-05-03', price: 2230 },
+  { date: '2024-05-04', price: 2300 },
+  { date: '2024-05-05', price: 2350 },
+  { date: '2024-05-06', price: 2400 },
+  { date: '2024-05-07', price: 2380 },
+  { date: '2024-05-08', price: 2450 },
+  { date: '2024-05-09', price: 2500 },
+  { date: '2024-05-10', price: 2470 },
 ];
 
 export const mockGovSchemes: GovernmentScheme[] = [
